@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Proyecto universitario UACh — Sistema de Fertirrigación mediante Inyector Venturi: diseño, simulación CFD y aplicación agrícola." />
+  <title>Fertirrigación · Inyector Venturi · UACh</title>
+
+  <!-- Fuentes tipográficas (Inter + Space Grotesk para titulares) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       BARRA DE NAVEGACIÓN LATERAL (índice flotante)
+       ============================================================ -->
+  <nav class="side-nav" aria-label="Índice de la presentación">
+    <ul>
+      <li><a href="#portada" class="nav-dot" data-label="Portada"></a></li>
+      <li><a href="#introduccion" class="nav-dot" data-label="1. Introducción"></a></li>
+      <li><a href="#problema" class="nav-dot" data-label="2. Problema"></a></li>
+      <li><a href="#objetivos" class="nav-dot" data-label="3. Objetivos"></a></li>
+      <li><a href="#marco" class="nav-dot" data-label="4. Marco teórico"></a></li>
+      <li><a href="#funcionamiento" class="nav-dot" data-label="5. Funcionamiento"></a></li>
+      <li><a href="#diseno" class="nav-dot" data-label="6. Diseño"></a></li>
+      <li><a href="#calculos" class="nav-dot" data-label="7. Cálculos"></a></li>
+      <li><a href="#aplicacion" class="nav-dot" data-label="8. Aplicación"></a></li>
+      <li><a href="#resultados" class="nav-dot" data-label="9. Resultados"></a></li>
+      <li><a href="#cierre" class="nav-dot" data-label="10. Cierre"></a></li>
+    </ul>
+  </nav>
+
+  <!-- Indicador de progreso de scroll -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ============================================================
+       PORTADA
+       ============================================================ -->
+  <section id="portada" class="slide cover">
+    <div class="cover-bg" aria-hidden="true"></div>
+
+    <header class="cover-logos">
+      <img src="assets/logos/uach-logo.png" alt="Universidad Autónoma Chapingo" class="logo logo-uach" />
+      <div class="logo-divider"></div>
+      <img src="assets/logos/dirh-logo.jpg" alt="Departamento de Irrigación UACh" class="logo logo-dirh" />
+    </header>
+
+    <div class="cover-inner">
+      <p class="eyebrow">Universidad Autónoma Chapingo · Departamento de Irrigación</p>
+      <h1 class="cover-title">
+        Sistema de Fertirrigación<br>
+        mediante <span class="accent">Inyector Venturi</span>
+      </h1>
+      <p class="cover-subtitle">Diseño, simulación CFD y aplicación en agricultura de precisión</p>
+
+      <div class="cover-meta">
+        <div class="meta-block">
+          <span class="meta-label">Materia</span>
+          <span class="meta-value">Termodinámica</span>
+        </div>
+        <div class="meta-block">
+          <span class="meta-label">Fecha</span>
+          <span class="meta-value editable" contenteditable="true" data-placeholder="[Fecha de exposición]">[Fecha de exposición]</span>
+        </div>
+      </div>
+
+      <div class="cover-cta">
+        <a href="#introduccion" class="scroll-hint" aria-label="Desplazarse para iniciar">
+          <span>Iniciar presentación</span>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       1. INTRODUCCIÓN
+       ============================================================ -->
+  <section id="introduccion" class="slide">
+    <div class="slide-header reveal">
+      <span class="section-tag">01 · Introducción</span>
+      <h2>¿Qué es la fertirrigación?</h2>
+      <p class="lede">La práctica agrícola que une, en un mismo flujo, el riego y la nutrición de los cultivos para aportar agua y fertilizantes de manera homogénea, oportuna y eficiente.</p>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div class="card-image">
+        <img src="assets/images/fertirrigacion.jpg" alt="Sistema de fertirrigación en campo" />
+        <span class="card-caption">Aplicación en parcela bajo riego presurizado</span>
+      </div>
+
+      <div class="card-text">
+        <h3>Importancia agrícola</h3>
+        <ul class="bullet-list">
+          <li><strong>Eficiencia hídrica:</strong> se entrega el fertilizante exactamente donde está la raíz, reduciendo pérdidas por lixiviación.</li>
+          <li><strong>Ahorro económico:</strong> menor consumo de fertilizantes y mano de obra al automatizar la dosificación.</li>
+          <li><strong>Sostenibilidad:</strong> menor contaminación de mantos acuíferos por escurrimiento de nutrientes.</li>
+          <li><strong>Productividad:</strong> incremento del rendimiento y calidad del cultivo en sistemas presurizados.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stat-row reveal">
+      <div class="stat">
+        <span class="stat-value">+30%</span>
+        <span class="stat-label">Ahorro de fertilizante frente al método tradicional</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">90%</span>
+        <span class="stat-label">Eficiencia de aplicación en sistemas presurizados</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">0 kW</span>
+        <span class="stat-label">Consumo eléctrico del inyector Venturi (sistema pasivo)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       2. PROBLEMA
+       ============================================================ -->
+  <section id="problema" class="slide tinted">
+    <div class="slide-header reveal">
+      <span class="section-tag">02 · Problema</span>
+      <h2>Dosificación eficiente bajo restricciones reales</h2>
+      <p class="lede">En México, gran parte del riego agrícola opera con multicompuertas y bajas cargas hidráulicas. Los equipos comerciales de inyección fallan cuando el diferencial de presión es muy pequeño.</p>
+    </div>
+
+    <div class="problem-grid reveal">
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 22v-2"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="M2 12h6"/><path d="M22 12h-6"/></svg>
+        </div>
+        <h3>Baja presión disponible</h3>
+        <p>Sistemas con apenas 0.1 a 0.2 kg/cm² de carga, insuficientes para que un inyector estándar genere succión.</p>
+      </article>
+
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Dosificación inestable</h3>
+        <p>Variaciones de presión a lo largo del día provocan mezclas desiguales y aplicaciones imprecisas.</p>
+      </article>
+
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/></svg>
+        </div>
+        <h3>Pérdidas de carga elevadas</h3>
+        <p>Diseños no optimizados comprometen el funcionamiento de emisores finales y elevan costos operativos.</p>
+      </article>
+
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16"/><path d="M21 12H7"/></svg>
+        </div>
+        <h3>Dependencia eléctrica</h3>
+        <p>Las bombas dosificadoras requieren energía y mantenimiento, limitando su uso en parcelas remotas.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       3. OBJETIVOS
+       ============================================================ -->
+  <section id="objetivos" class="slide">
+    <div class="slide-header reveal">
+      <span class="section-tag">03 · Objetivos</span>
+      <h2>Lo que buscamos demostrar</h2>
+    </div>
+
+    <div class="objetivos-layout reveal">
+      <div class="obj-general">
+        <span class="obj-tag">Objetivo general</span>
+        <p>Analizar, diseñar y simular un inyector Venturi capaz de operar eficientemente en sistemas de fertirrigación de baja presión, sustentando su funcionamiento en los principios termodinámicos e hidráulicos.</p>
+      </div>
+
+      <div class="obj-especificos">
+        <span class="obj-tag">Objetivos específicos</span>
+        <ol class="num-list">
+          <li>Aplicar el Principio de Bernoulli y el Efecto Venturi para explicar la generación de succión por diferencial de presión.</li>
+          <li>Determinar la geometría óptima (ángulos convergente y divergente) según el tipo de aplicación agrícola.</li>
+          <li>Modelar el caudal mediante la ecuación de descarga y evaluar la sensibilidad a la relación de diámetros (β).</li>
+          <li>Identificar configuraciones de instalación (serie, paralelo, by-pass) y sus ventajas operativas.</li>
+          <li>Establecer protocolos de mantenimiento, diagnóstico y prevención de la cavitación.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       4. MARCO TEÓRICO
+       ============================================================ -->
+  <section id="marco" class="slide tinted">
+    <div class="slide-header reveal">
+      <span class="section-tag">04 · Marco teórico</span>
+      <h2>Bernoulli, Venturi y la conservación de la energía</h2>
+      <p class="lede">El inyector Venturi opera bajo leyes deterministas de la mecánica de fluidos: la energía total a lo largo de la línea de corriente se conserva, sólo cambia de forma.</p>
+    </div>
+
+    <div class="theory-grid reveal">
+      <article class="theory-card">
+        <span class="card-num">B1</span>
+        <h3>Principio de Bernoulli</h3>
+        <p>Para un fluido incompresible, la suma de la energía de presión, la energía cinética y la energía potencial permanece constante a lo largo de una línea de corriente.</p>
+        <div class="eq-box">
+          <span>P + ½ ρ v² + ρ g h = constante</span>
+        </div>
+      </article>
+
+      <article class="theory-card">
+        <span class="card-num">B2</span>
+        <h3>Efecto Venturi</h3>
+        <p>Cuando un fluido motriz atraviesa una reducción de sección, su energía de presión se transforma en energía cinética: la velocidad aumenta y la presión estática disminuye.</p>
+        <div class="eq-box">
+          <span>A₁ v₁ = A₂ v₂ · &nbsp; (continuidad)</span>
+        </div>
+      </article>
+
+      <article class="theory-card">
+        <span class="card-num">B3</span>
+        <h3>Relación presión–velocidad</h3>
+        <p>Si la velocidad en la garganta es suficientemente alta, la presión estática cae por debajo de la presión atmosférica, generando un vacío parcial capaz de aspirar un segundo fluido por el puerto lateral.</p>
+        <div class="eq-box">
+          <span>↑ v &nbsp; ⟹ &nbsp; ↓ P<sub>estática</sub></span>
+        </div>
+      </article>
+    </div>
+
+    <div class="bernoulli-visual reveal" aria-label="Esquema Bernoulli">
+      <svg viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="pipeGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#cfe8ff" />
+            <stop offset="100%" stop-color="#9cc8ec" />
+          </linearGradient>
+        </defs>
+        <!-- Tubería convergente-divergente -->
+        <path d="M40,60 L300,60 L380,95 L420,95 L500,60 L760,60 L760,140 L500,140 L420,105 L380,105 L300,140 L40,140 Z"
+              fill="url(#pipeGrad)" stroke="#1f6f8b" stroke-width="2"/>
+        <!-- Etiquetas -->
+        <text x="120" y="45" class="svg-label">P₁ · v₁ · A₁</text>
+        <text x="375" y="80" class="svg-label svg-accent" text-anchor="middle">P₂ · v₂ · A₂</text>
+        <text x="660" y="45" class="svg-label">P₃ · v₃ · A₃</text>
+        <!-- Flechas de flujo -->
+        <g class="flow-arrows">
+          <path d="M70 100 L120 100" stroke="#0a7d52" stroke-width="3" marker-end="url(#arrow)"/>
+          <path d="M180 100 L240 100" stroke="#0a7d52" stroke-width="3" marker-end="url(#arrow)"/>
+          <path d="M560 100 L620 100" stroke="#0a7d52" stroke-width="3" marker-end="url(#arrow)"/>
+          <path d="M670 100 L730 100" stroke="#0a7d52" stroke-width="3" marker-end="url(#arrow)"/>
+        </g>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#0a7d52"/>
+          </marker>
+        </defs>
+        <!-- Garganta -->
+        <text x="400" y="170" class="svg-caption" text-anchor="middle">Garganta · velocidad máxima · presión mínima</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       5. FUNCIONAMIENTO DEL SISTEMA
+       ============================================================ -->
+  <section id="funcionamiento" class="slide">
+    <div class="slide-header reveal">
+      <span class="section-tag">05 · Funcionamiento</span>
+      <h2>Cinco etapas dentro del inyector</h2>
+      <p class="lede">Entrada → Garganta → Succión → Mezcla → Salida. La secuencia ocurre en milisegundos y sin partes móviles.</p>
+    </div>
+
+    <div class="flow-diagram reveal" aria-label="Diagrama de funcionamiento">
+      <div class="flow-step" data-step="1">
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </div>
+        <h4>Entrada</h4>
+        <p>El flujo motriz ingresa a la zona convergente con presión estática P₁.</p>
+      </div>
+
+      <div class="flow-step" data-step="2">
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16"/><path d="M8 7v10"/><path d="M16 7v10"/></svg>
+        </div>
+        <h4>Garganta</h4>
+        <p>Reducción de área: la velocidad se dispara y la presión cae al mínimo.</p>
+      </div>
+
+      <div class="flow-step" data-step="3">
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8"/><path d="m8 6 4-4 4 4"/><circle cx="12" cy="16" r="6"/></svg>
+        </div>
+        <h4>Succión</h4>
+        <p>El puerto lateral aspira el aditivo desde el tanque de fertilizante.</p>
+      </div>
+
+      <div class="flow-step" data-step="4">
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M4 12c4-4 12 4 16 0"/></svg>
+        </div>
+        <h4>Mezcla</h4>
+        <p>El difusor recupera presión y homogeneiza el fluido motriz con el aditivo.</p>
+      </div>
+
+      <div class="flow-step" data-step="5">
+        <div class="flow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </div>
+        <h4>Salida</h4>
+        <p>La solución fertilizante se reintegra al sistema principal de riego.</p>
+      </div>
+    </div>
+
+    <div class="reveal img-band">
+      <figure>
+        <img src="assets/images/venturi-funcionamiento.jpg" alt="Esquema del funcionamiento del inyector Venturi" />
+        <figcaption>Sección transversal del inyector: trayectoria del flujo motriz y entrada del aditivo.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       6. DISEÑO DEL INYECTOR
+       ============================================================ -->
+  <section id="diseno" class="slide tinted">
+    <div class="slide-header reveal">
+      <span class="section-tag">06 · Diseño</span>
+      <h2>Anatomía y geometría del inyector</h2>
+      <p class="lede">La eficiencia no es producto del azar, sino de una geometría interna estrictamente calculada para minimizar la entropía del sistema.</p>
+    </div>
+
+    <div class="design-grid reveal">
+      <div class="component-card">
+        <span class="component-marker">A</span>
+        <h4>Conexión de entrada</h4>
+        <p>Dimensionada según el flujo motriz disponible.</p>
+      </div>
+      <div class="component-card">
+        <span class="component-marker">B</span>
+        <h4>Zona convergente</h4>
+        <p>Aceleración gradual del fluido para evitar turbulencias prematuras.</p>
+      </div>
+      <div class="component-card">
+        <span class="component-marker">C</span>
+        <h4>Garganta (d)</h4>
+        <p>Diámetro mínimo: punto crítico donde se genera la presión negativa.</p>
+      </div>
+      <div class="component-card">
+        <span class="component-marker">D</span>
+        <h4>Puerto de succión</h4>
+        <p>Con válvula de retención (esfera de PTFE y resorte de Hastelloy C-22).</p>
+      </div>
+      <div class="component-card">
+        <span class="component-marker">E</span>
+        <h4>Difusor divergente</h4>
+        <p>Sección de expansión para recuperar la presión estática.</p>
+      </div>
+      <div class="component-card">
+        <span class="component-marker">F</span>
+        <h4>Conexión de salida</h4>
+        <p>La mezcla se reintegra al sistema principal de riego.</p>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 class="subhead">Ángulos de diseño recomendados</h3>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tipo de diseño</th>
+              <th>Ángulo convergente α</th>
+              <th>Ángulo divergente β</th>
+              <th>Aplicación técnica</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill pill-blue">Comercial estándar</span></td>
+              <td>21° o 10.5°</td>
+              <td>5° – 7°</td>
+              <td>Mazzei, Vicamp; propósitos generales.</td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-green">Alta eficiencia</span></td>
+              <td>7.5°</td>
+              <td>5°</td>
+              <td>Optimización de energía; mínima pérdida de carga (Zárate).</td>
+            </tr>
+            <tr class="row-highlight">
+              <td><span class="pill pill-accent">Baja presión</span></td>
+              <td>21°</td>
+              <td>6°</td>
+              <td>Específico para multicompuertas (0.1 – 0.2 kg/cm²).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal img-band">
+      <figure>
+        <img src="assets/images/venturi-diagrama.webp" alt="Componentes internos del inyector Venturi" />
+        <figcaption>Componentes internos y geometría optimizada del inyector Venturi.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       7. CÁLCULOS Y ECUACIONES
+       ============================================================ -->
+  <section id="calculos" class="slide">
+    <div class="slide-header reveal">
+      <span class="section-tag">07 · Cálculos</span>
+      <h2>Modelado matemático del caudal</h2>
+      <p class="lede">Para fluidos no compresibles como el agua, se aplica la ecuación de descarga derivada de la conservación de la masa y la energía.</p>
+    </div>
+
+    <div class="equation-card reveal">
+      <span class="equation-label">Ecuación de descarga</span>
+      <div class="equation-display" aria-label="Q igual a Cd sobre raíz de uno menos beta a la cuarta, por pi cuartos d cuadrada, por raíz de dos g h cero">
+        <span class="eq-q">Q</span>
+        <span class="eq-eq">=</span>
+        <span class="frac">
+          <span class="num">C<sub>d</sub></span>
+          <span class="den"><span class="radical">√<span class="rad-content">1 − β<sup>4</sup></span></span></span>
+        </span>
+        <span class="frac">
+          <span class="num">π</span>
+          <span class="den">4</span>
+        </span>
+        <span class="eq-var">d<sup>2</sup></span>
+        <span class="radical">√<span class="rad-content">2 g h<sub>0</sub></span></span>
+      </div>
+    </div>
+
+    <div class="vars-grid reveal">
+      <div class="var-card">
+        <span class="var-sym">Q</span>
+        <span class="var-desc">Caudal o gasto volumétrico</span>
+        <span class="var-unit">m³/s</span>
+      </div>
+      <div class="var-card">
+        <span class="var-sym">C<sub>d</sub></span>
+        <span class="var-desc">Coeficiente de descarga; corrige fricción y contracción</span>
+        <span class="var-unit">adimensional</span>
+      </div>
+      <div class="var-card">
+        <span class="var-sym">β</span>
+        <span class="var-desc">Relación de diámetros d/D (garganta vs entrada)</span>
+        <span class="var-unit">adimensional</span>
+      </div>
+      <div class="var-card">
+        <span class="var-sym">d</span>
+        <span class="var-desc">Diámetro de la garganta</span>
+        <span class="var-unit">m</span>
+      </div>
+      <div class="var-card">
+        <span class="var-sym">g</span>
+        <span class="var-desc">Aceleración de la gravedad</span>
+        <span class="var-unit">9.81 m/s²</span>
+      </div>
+      <div class="var-card">
+        <span class="var-sym">h<sub>0</sub></span>
+        <span class="var-desc">Cabezal hidráulico diferencial entre entrada y salida</span>
+        <span class="var-unit">m.c.a.</span>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <h4>Condiciones de validez</h4>
+      <ul>
+        <li>Flujo estrictamente homogéneo y conducto a presión (tubo lleno).</li>
+        <li>Fluido no compresible (fase líquida predominante).</li>
+        <li>Diferencial de presión medido con manómetros calibrados.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       8. APLICACIÓN EN FERTIRRIGACIÓN
+       ============================================================ -->
+  <section id="aplicacion" class="slide">
+    <div class="slide-header reveal">
+      <span class="section-tag">08 · Aplicación</span>
+      <h2>Fertirrigación en sistemas de baja presión</h2>
+      <p class="lede">El reto técnico: que el inyector genere succión con un diferencial mínimo, donde los modelos comerciales fallan.</p>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div class="card-image">
+        <img src="assets/images/riego-agricola.jpg" alt="Sistema de riego agrícola por multicompuertas" />
+        <span class="card-caption">Multicompuertas en parcela: el campo de aplicación principal</span>
+      </div>
+
+      <div class="card-text">
+        <h3>Claves del diseño optimizado</h3>
+        <ul class="bullet-list">
+          <li><strong>Geometría 21° / 6°</strong> para baja presión.</li>
+          <li>Eficiencia mejora si el <strong>fertilizante es más denso que el agua motriz</strong>.</li>
+          <li>Integración con control de lazo cerrado mediante <strong>PID</strong> o <strong>PWM</strong>.</li>
+          <li>Compensación automática de fluctuaciones de presión.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="benefits-grid reveal">
+      <div class="benefit">
+        <div class="benefit-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+        </div>
+        <h4>Sin electricidad</h4>
+        <p>Sistema pasivo: no requiere bombas dosificadoras ni energía externa.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
+        </div>
+        <h4>Baja pérdida de carga</h4>
+        <p>Geometría optimizada que respeta la presión disponible para los emisores aguas abajo.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 5 5 9-9"/></svg>
+        </div>
+        <h4>Eficiencia comprobada</h4>
+        <p>Hasta el triple de los inyectores comerciales en condiciones difíciles.</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h4>Bajo mantenimiento</h4>
+        <p>Sin partes móviles internas: durabilidad y costo operativo mínimo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       9. RESULTADOS Y CONCLUSIONES
+       ============================================================ -->
+  <section id="resultados" class="slide tinted">
+    <div class="slide-header reveal">
+      <span class="section-tag">09 · Resultados</span>
+      <h2>Hallazgos y conclusiones técnicas</h2>
+    </div>
+
+    <div class="findings-grid reveal">
+      <article class="finding">
+        <span class="finding-num">01</span>
+        <h3>Superioridad del diseño a medida</h3>
+        <p>Un inyector diseñado para las condiciones específicas del proyecto puede <strong>triplicar la eficiencia</strong> de los modelos comerciales, sobre todo en baja presión.</p>
+      </article>
+
+      <article class="finding">
+        <span class="finding-num">02</span>
+        <h3>Simplicidad operativa</h3>
+        <p>La ausencia de partes móviles y la independencia eléctrica convierten al Venturi en la solución de <strong>menor costo operativo</strong> para fertirrigación y aireación industrial.</p>
+      </article>
+
+      <article class="finding">
+        <span class="finding-num">03</span>
+        <h3>Geometría como variable crítica</h3>
+        <p>Los ángulos convergente y divergente determinan la <strong>succión efectiva</strong>: el diseño 21°/6° optimiza la operación en escenarios de baja presión.</p>
+      </article>
+
+      <article class="finding">
+        <span class="finding-num">04</span>
+        <h3>Diferencial de presión gobernante</h3>
+        <p>El sistema requiere un <strong>diferencial mínimo del 25-30%</strong> para iniciar succión y alcanza su rendimiento pico cuando el diferencial llega al 50%.</p>
+      </article>
+    </div>
+
+    <div class="reveal final-quote">
+      <blockquote>
+        “La eficiencia hidráulica no es producto del azar, sino de una geometría estrictamente calculada para minimizar la entropía del sistema.”
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       12. CIERRE
+       ============================================================ -->
+  <section id="cierre" class="slide closing">
+    <div class="closing-bg" aria-hidden="true"></div>
+    <div class="closing-inner reveal">
+      <p class="closing-eyebrow">Universidad Autónoma Chapingo · Departamento de Irrigación</p>
+      <h2 class="closing-title">Gracias por su atención</h2>
+      <p class="closing-sub">Proyecto de Fertirrigación mediante Inyector Venturi · Termodinámica</p>
+
+      <div class="closing-logos">
+        <img src="assets/logos/uach-logo.png" alt="UACh" />
+        <img src="assets/logos/dirh-logo.jpg" alt="Departamento de Irrigación" />
+      </div>
+
+      <a href="#portada" class="back-to-top">↑ Volver al inicio</a>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
